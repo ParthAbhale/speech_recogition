@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Speech Recognition
+    </title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+        .container{
+            display: flex;
+            width: 70vw;
+            height: 80vh;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #000;
+            border-radius: 15px;
+        }
+        .btn{
+            width: 200px;
+            height: 60px;
+            font-size: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .active-n{
+            color: rgb(0, 255, 136);
+            border: 1px solid rgb(0, 255, 136);
+        }
+        .active-y{
+            color: rgb(255, 0, 0);
+            border: 1px solid rgb(255, 0, 0);
+        }
+        .output{
+            text-align: center;
+            font-weight: 600;
+            font-size: 20px;
+            width: 60vw;
+            margin: 20px;
+            margin-top: 60px;
+            color: rgb(255, 255, 255);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="btn active-n">Tap to Speak</div>
+        <div class="output">
+        </div>
+    </div>
+</body>
+<script>
+    if (SpeechRecognition) {
+    let status = document.querySelector('.btn');
+    let output = document.querySelector('.output');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+
+    const getStartRecordingSpeech = () => {
+        status.textContent = ("Speak");
+        status.classList.add('active-y');
+        status.classList.remove('active-n');
+        recognition.start();
+        recognition.onresult = (event) => {
+            recognition.stop();
+            const transcript =   event.results[0][0].transcript;
+            
+                output.textContent = ('Recognized speech: '+ transcript);
+                // setTimeout(()=>{
+                    status.classList.remove('active-y'); 
+                    status.classList.add("active-n")
+                    status.textContent = ("Tap to speak");
+            
+        };
+        recognition.onerror = (event) => {
+            recognition.stop();
+            output.textContent = ('No Speech Recognized.');
+            // setTimeout(()=>{
+                status.classList.remove('active-y'); 
+                status.classList.add("active-n")
+            // },400)
+            status.textContent = ("Tap to speak");
+        };
+    }
+    status.addEventListener('click' , ()=> {
+        getStartRecordingSpeech()
+    })
+    } else {
+    alert('Web Speech API is not supported in this browser.');
+}
+</script>
+</html>
